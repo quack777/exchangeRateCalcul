@@ -23,12 +23,13 @@ const FirstCal: FC = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  const changeCurCountry = (e: ChangeEvent<HTMLSelectElement>) => {
-    const country = `USD${e.target.value}`;
+  const changeSelectCountry = (e: ChangeEvent<HTMLSelectElement>) => {
+    const selectCountry = e.target.value;
     if (exchangeRateInfo) {
-      setCurCountryExchangeRate(exchangeRateInfo[country]);
+      const exchange = Number(exchangeRateInfo[`USD${selectCountry}`].toFixed(2));
+      setCurCountryExchangeRate(exchange);
     }
-    setCurSelectCountry(e.target.value);
+    setCurSelectCountry(selectCountry);
   };
 
   const sendMoney = (e: FormEvent<HTMLFormElement>) => {
@@ -41,7 +42,7 @@ const FirstCal: FC = () => {
         <p>송금국가: 미국(USD)</p>
         <div>
           <p>수취국가:</p>
-          <select onChange={changeCurCountry}>
+          <select onChange={changeSelectCountry}>
             <option value="KRW">한국(KRW)</option>
             <option value="JPY">일본(JPY)</option>
             <option value="PHP">필리핀(PHP)</option>
@@ -52,7 +53,7 @@ const FirstCal: FC = () => {
         </p>
         <div>
           <p>송금액:</p>
-          <input type="number"></input>
+          <input type="number" required></input>
           <p>USD</p>
         </div>
         <button>Submit</button>
