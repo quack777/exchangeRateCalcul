@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "terms": "https://currencylayer.com/terms",
+  "privacy": "https://currencylayer.com/privacy",
+  "timestamp": 1545881647,
+  "source": "USD",
+  "quotes": {
+    "USDKRW": 1121.419945,
+    "USDJPY": 110.959498,
+    "USDPHP": 52.72027
+  }
+}
