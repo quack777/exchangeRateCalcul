@@ -2,7 +2,7 @@ import { FC } from 'react';
 import FirstCal from './pages/first/FirstCal';
 import SecondCal from './pages/second/SecondCal';
 
-const App: FC = () => {
+const Router: FC = () => {
   return (
     <div className="App">
       <FirstCal />
@@ -11,4 +11,4 @@ const App: FC = () => {
   );
 };
 
-export default App;
+export default Router;
