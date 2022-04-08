@@ -12,6 +12,8 @@ const FirstCal: FC = () => {
   const [exchangeRateInfo, setExchangeRateInfo] = useState<exchangeRateInfo>();
   const [curSelectCountry, setCurSelectCountry] = useState<string>('KRW');
   const [curCountryExchangeRate, setCurCountryExchangeRate] = useState<number>();
+  const [remmit, setRemmit] = useState<number | string>();
+  const [amountReceivable, setAmountReceivable] = useState<number>();
 
   useEffect(() => {
     axios
@@ -34,7 +36,21 @@ const FirstCal: FC = () => {
 
   const sendMoney = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(remmit);
+    setRemmit('');
+    if(curCountryExchangeRate && remmit && typeof remmit === "number") {
+      setAmountReceivable(amountReceivableCalcul(curCountryExchangeRate, remmit));
+    }
   };
+
+  const amountReceivableCalcul = (exchangeRate: number, remmit: number): number => {
+    return Number((exchangeRate * remmit).toFixed(2));
+  }
+
+  const saveRemmit = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+    setRemmit(Number(e.target.value));
+  }
 
   return (
     <div>
@@ -53,11 +69,15 @@ const FirstCal: FC = () => {
         </p>
         <div>
           <p>송금액:</p>
-          <input type="number" required></input>
+          <input type="number" required min="0" max="10000" value={remmit} onChange={saveRemmit}/>
           <p>USD</p>
         </div>
         <button>Submit</button>
       </form>
+      {
+        amountReceivable &&
+      <p>수취금액은 {amountReceivable.toLocaleString()}{curSelectCountry}입니다.</p>
+      }
     </div>
   );
 };
