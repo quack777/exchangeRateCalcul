@@ -10,53 +10,61 @@ type exchangeRateInfo = {
 
 const FirstCal: FC = () => {
   const [exchangeRateInfo, setExchangeRateInfo] = useState<exchangeRateInfo>();
-  const [curSelectCountry, setCurSelectCountry] = useState<string>('KRW');
+  const [selectedCountry, setSelectedCountry] = useState<string>('KRW');
   const [curCountryExchangeRate, setCurCountryExchangeRate] = useState<number>();
-  const [remmit, setRemmit] = useState<string>();
+  const [enterdedMoney, setEnterdedMoney] = useState<string>();
   const [amountReceivable, setAmountReceivable] = useState<number | null>(null);
 
   useEffect(() => {
-    axios
-      .get('/data/exchangeRate.json')
-      .then((res) => {
-        setExchangeRateInfo(res.data.quotes);
-        setCurCountryExchangeRate(res.data.quotes.USDKRW);
-      })
-      .catch((err) => console.log(err));
+    const getExchangeRateInfoApi = () => {
+      axios
+        .get('/data/exchangeRate.json')
+        .then((res) => {
+          setExchangeRateInfo(res.data.quotes);
+          setCurCountryExchangeRate(res.data.quotes.USDKRW);
+        })
+        .catch((err) => console.log(err));
+    };
+    getExchangeRateInfoApi();
   }, []);
 
   const changeSelectCountry = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectCountry = e.target.value;
+    setSelectedCountry(selectCountry);
     if (exchangeRateInfo) {
       const exchange = Number(exchangeRateInfo[`USD${selectCountry}`].toFixed(2));
       setCurCountryExchangeRate(exchange);
     }
-    setCurSelectCountry(selectCountry);
-    resetRemmit();
+
+    resetEnterdedMoney();
     setAmountReceivable(null);
   };
 
   const sendMoney = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(remmit);
-    if (curCountryExchangeRate && remmit && remmit !== "0") {
-      resetRemmit();
-      setAmountReceivable(amountReceivableCalcul(curCountryExchangeRate, removeCommaMoney(remmit)));
+    if (curCountryExchangeRate && enterdedMoney && enterdedMoney !== '0') {
+      resetEnterdedMoney();
+      setAmountReceivable(amountReceivableCalcul(curCountryExchangeRate, removeCommaMoney(enterdedMoney)));
     }
   };
 
-  const amountReceivableCalcul = (exchangeRate: number, remmit: number): number => {
-    return Number((exchangeRate * remmit).toFixed(2));
+  const amountReceivableCalcul = (exchangeRate: number, enterdedMoney: number): number => {
+    return Number((exchangeRate * enterdedMoney).toFixed(2));
   };
 
   const saveRemmit = (e: ChangeEvent<HTMLInputElement>) => {
     const money: string = e.target.value;
     const removedMoney: number = removeCommaMoney(money);
-    if (money === ' ' || isNaN(removedMoney) || removedMoney < 0 || removedMoney > 10000) {
+    const maximumNum = 10000;
+    if (money === ' ' || removedMoney < 0) {
       console.log('유효하지 않음');
-      resetRemmit();
+      resetEnterdedMoney();
+    } else if (removedMoney > maximumNum) {
+      setEnterdedMoney(maximumNum.toLocaleString());
+      setAmountReceivable(null);
     } else {
-      setRemmit(Number(removedMoney).toLocaleString());
+      setEnterdedMoney(removedMoney.toLocaleString());
+      setAmountReceivable(null);
     }
   };
 
@@ -64,9 +72,13 @@ const FirstCal: FC = () => {
     return Number(money.replaceAll(',', ''));
   };
 
-  const resetRemmit = () => {
-    setRemmit('0');
-  }
+  const resetEnterdedMoney = () => {
+    setEnterdedMoney('0');
+  };
+
+  const changeMoneyForm = (money: number): string => {
+    return money.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
 
   return (
     <div>
@@ -81,19 +93,19 @@ const FirstCal: FC = () => {
           </select>
         </div>
         <p>
-          환율: {curCountryExchangeRate?.toLocaleString()} {curSelectCountry}/USD
+          환율: {curCountryExchangeRate && changeMoneyForm(curCountryExchangeRate)} {selectedCountry}/USD
         </p>
         <div>
           <p>송금액:</p>
-          <input type="text" value={remmit} onChange={saveRemmit} />
+          <input type="text" value={enterdedMoney} onChange={saveRemmit} />
           <p>USD</p>
         </div>
         <button>Submit</button>
       </form>
       {amountReceivable && (
         <p>
-          수취금액은 {amountReceivable.toLocaleString()}
-          {curSelectCountry}입니다.
+          수취금액은 {changeMoneyForm(amountReceivable)}
+          {selectedCountry}입니다.
         </p>
       )}
     </div>

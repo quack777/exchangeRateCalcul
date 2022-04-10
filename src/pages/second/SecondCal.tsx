@@ -38,20 +38,21 @@ const SecondCal: FC = () => {
   const [selectedStandardCountry, setSelectedStandardCountry] = useState<string>(countrysInfo[0].engCountry);
   const [clickedCountry, setClickedCountry] = useState<string>(countrysInfo[1].engCountry);
   const [enterdedAmount, setEnterdedAmount] = useState<string>();
-  const [exchangeRateQuotes, setExchangeRateQuotes] = useState<{[key: string]: number}>();
-  const [calculatedAmount, setCalculatedAmount] = useState(0);
+  const [exchangeRateQuotes, setExchangeRateQuotes] = useState<{ [key: string]: number }>();
+  const [calculatedAmount, setCalculatedAmount] = useState<number | string>(0);
 
   useEffect(() => {
     const getExchangeRateInfoApi = () => {
-      axios.get("/data/data.json")
+      axios
+        .get('/data/data.json')
         .then((res) => {
           console.log(res.data);
           setExchangeRateQuotes(res.data.quotes);
         })
         .catch((err) => console.log(err));
-    }
+    };
     getExchangeRateInfoApi();
-  }, [])
+  }, []);
 
   const changeSelectedCountry = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedCountry = e.target.value;
@@ -73,40 +74,43 @@ const SecondCal: FC = () => {
 
   const changeEnterdedAmount = (e: ChangeEvent<HTMLInputElement>) => {
     const money: string = e.target.value;
-    const removedCommaMoney = Number(money.replaceAll(",", ""));
-    if(removedCommaMoney > 1000) {
-      return setEnterdedAmount("1,000")
+    const removedCommaMoney = Number(money.replaceAll(',', ''));
+    if (removedCommaMoney > 1000) {
+      return setEnterdedAmount('1,000');
     }
-    if(money === " " || removedCommaMoney < 0 || isNaN(removedCommaMoney)) {
+    if (money === ' ' || removedCommaMoney < 0 || isNaN(removedCommaMoney)) {
       // console.log("유효하지 않음");
     } else {
       setEnterdedAmount(removedCommaMoney.toLocaleString());
     }
-  }
+  };
 
   const sendMoneyCalculate = () => {
-    if(exchangeRateQuotes) {
-      // console.log(selectedStandardCountry, clickedCountry);
-      // console.log(enterdedAmount, exchangeRateQuotes[`${selectedStandardCountry}${clickedCountry}`]);
-    }
-    if(exchangeRateQuotes) {
-      if(selectedStandardCountry === "USD") {
+    if (exchangeRateQuotes) {
+      if (selectedStandardCountry === 'USD') {
         const exchangeRate = Number(exchangeRateQuotes[`${selectedStandardCountry}${clickedCountry}`].toFixed(2));
-        const removedCommaMoney = Number(enterdedAmount?.replaceAll(",", ''));
-        console.log(removedCommaMoney, exchangeRate);
-        setCalculatedAmount(Number((exchangeRate * removedCommaMoney)))
+        const removedCommaMoney = Number(enterdedAmount?.replaceAll(',', ''));
+        setCalculatedAmount((exchangeRate * removedCommaMoney).toFixed(2));
       }
     }
-  }
+  };
+
+  useEffect(() => {
+    const a = () => {
+      const a = 2;
+      console.log(a.toFixed(2));
+    };
+    a();
+  }, []);
 
   useEffect(() => {
     sendMoneyCalculate();
-  }, [enterdedAmount])
+  }, [enterdedAmount]);
 
   return (
     <div>
       <section>
-        <input type="text" value={enterdedAmount} onChange={changeEnterdedAmount}/>
+        <input type="text" value={enterdedAmount} onChange={changeEnterdedAmount} />
         <select onChange={changeSelectedCountry}>
           {countrysInfo.map((country) => {
             return <option key={country.id}>{country.engCountry}</option>;
@@ -128,7 +132,9 @@ const SecondCal: FC = () => {
           })}
         </CountrysBox>
         <div>
-          <p>{clickedCountry} {calculatedAmount.toLocaleString()}</p>
+          <p>
+            {clickedCountry} {calculatedAmount.toLocaleString()}
+          </p>
           <p>2,000.00</p>
           <p>기준일:</p>
           <p>2022</p>
