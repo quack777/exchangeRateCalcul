@@ -13,7 +13,7 @@ const FirstCal: FC = () => {
   const [curSelectCountry, setCurSelectCountry] = useState<string>('KRW');
   const [curCountryExchangeRate, setCurCountryExchangeRate] = useState<number>();
   const [remmit, setRemmit] = useState<string>();
-  const [amountReceivable, setAmountReceivable] = useState<number>();
+  const [amountReceivable, setAmountReceivable] = useState<number | null>(null);
 
   useEffect(() => {
     axios
@@ -32,13 +32,15 @@ const FirstCal: FC = () => {
       setCurCountryExchangeRate(exchange);
     }
     setCurSelectCountry(selectCountry);
+    resetRemmit();
+    setAmountReceivable(null);
   };
 
   const sendMoney = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(remmit);
-    // setRemmit('');
-    if (curCountryExchangeRate && remmit) {
+    if (curCountryExchangeRate && remmit && remmit !== "0") {
+      resetRemmit();
       setAmountReceivable(amountReceivableCalcul(curCountryExchangeRate, removeCommaMoney(remmit)));
     }
   };
@@ -52,6 +54,7 @@ const FirstCal: FC = () => {
     const removedMoney: number = removeCommaMoney(money);
     if (money === ' ' || isNaN(removedMoney) || removedMoney < 0 || removedMoney > 10000) {
       console.log('유효하지 않음');
+      resetRemmit();
     } else {
       setRemmit(Number(removedMoney).toLocaleString());
     }
@@ -60,6 +63,10 @@ const FirstCal: FC = () => {
   const removeCommaMoney = (money: string): number => {
     return Number(money.replaceAll(',', ''));
   };
+
+  const resetRemmit = () => {
+    setRemmit('0');
+  }
 
   return (
     <div>
