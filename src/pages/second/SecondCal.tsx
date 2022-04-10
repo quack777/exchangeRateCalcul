@@ -1,12 +1,12 @@
 import React, { ChangeEvent, FC, useState } from 'react';
 import styled from 'styled-components';
 
-interface countrysInfo {
+interface countrysInfoType {
   id: number;
   engCountry: string;
 }
 
-const countrysInfo: countrysInfo[] = [
+const countrysInfo: countrysInfoType[] = [
   {
     id: 0,
     engCountry: 'USD',
@@ -38,14 +38,15 @@ const SecondCal: FC = () => {
   const [clickedCountry, setClickedCountry] = useState<string>(countrysInfo[1].engCountry);
 
   const changeSelectedCountry = (e: ChangeEvent<HTMLSelectElement>) => {
-    console.log(e.target.value);
     const selectedCountry = e.target.value;
     setSelectedStandardCountry(selectedCountry);
+    setClickedCountry(
+      selectedCountry === countrysInfo[0].engCountry ? countrysInfo[1].engCountry : countrysInfo[0].engCountry,
+    );
   };
 
   const changeClickedCountry = (e: React.MouseEvent<HTMLDivElement>) => {
     const elementTarget = e.target as Element;
-    console.dir(elementTarget.innerHTML);
     setClickedCountry(elementTarget.innerHTML);
   };
 
@@ -78,7 +79,7 @@ const SecondCal: FC = () => {
           })}
         </CountrysBox>
         <div>
-          <p>CAD 2,000.00</p>
+          <p>{clickedCountry} 2,000.00</p>
           <p>기준일:</p>
           <p>2022</p>
         </div>
