@@ -12,7 +12,7 @@ const FirstCal: FC = () => {
   const [exchangeRateInfo, setExchangeRateInfo] = useState<exchangeRateInfo>();
   const [curSelectCountry, setCurSelectCountry] = useState<string>('KRW');
   const [curCountryExchangeRate, setCurCountryExchangeRate] = useState<number>();
-  const [remmit, setRemmit] = useState<number | string>();
+  const [remmit, setRemmit] = useState<string>();
   const [amountReceivable, setAmountReceivable] = useState<number>();
 
   useEffect(() => {
@@ -37,20 +37,29 @@ const FirstCal: FC = () => {
   const sendMoney = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(remmit);
-    setRemmit('');
-    if(curCountryExchangeRate && remmit && typeof remmit === "number") {
-      setAmountReceivable(amountReceivableCalcul(curCountryExchangeRate, remmit));
+    // setRemmit('');
+    if (curCountryExchangeRate && remmit) {
+      setAmountReceivable(amountReceivableCalcul(curCountryExchangeRate, removeCommaMoney(remmit)));
     }
   };
 
   const amountReceivableCalcul = (exchangeRate: number, remmit: number): number => {
     return Number((exchangeRate * remmit).toFixed(2));
-  }
+  };
 
   const saveRemmit = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
-    setRemmit(Number(e.target.value));
-  }
+    const money: string = e.target.value;
+    const removedMoney: number = removeCommaMoney(money);
+    if (money === ' ' || isNaN(removedMoney) || removedMoney < 0 || removedMoney > 10000) {
+      console.log('유효하지 않음');
+    } else {
+      setRemmit(Number(removedMoney).toLocaleString());
+    }
+  };
+
+  const removeCommaMoney = (money: string): number => {
+    return Number(money.replaceAll(',', ''));
+  };
 
   return (
     <div>
@@ -69,15 +78,17 @@ const FirstCal: FC = () => {
         </p>
         <div>
           <p>송금액:</p>
-          <input type="number" required min="0" max="10000" value={remmit} onChange={saveRemmit}/>
+          <input type="text" value={remmit} onChange={saveRemmit} />
           <p>USD</p>
         </div>
         <button>Submit</button>
       </form>
-      {
-        amountReceivable &&
-      <p>수취금액은 {amountReceivable.toLocaleString()}{curSelectCountry}입니다.</p>
-      }
+      {amountReceivable && (
+        <p>
+          수취금액은 {amountReceivable.toLocaleString()}
+          {curSelectCountry}입니다.
+        </p>
+      )}
     </div>
   );
 };
