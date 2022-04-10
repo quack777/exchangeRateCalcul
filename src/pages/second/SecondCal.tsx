@@ -36,6 +36,7 @@ const countrysInfo: countrysInfoType[] = [
 const SecondCal: FC = () => {
   const [selectedStandardCountry, setSelectedStandardCountry] = useState<string>(countrysInfo[0].engCountry);
   const [clickedCountry, setClickedCountry] = useState<string>(countrysInfo[1].engCountry);
+  const [enterdedAmount, setEnterdedAmount] = useState<string>();
 
   const changeSelectedCountry = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedCountry = e.target.value;
@@ -54,10 +55,24 @@ const SecondCal: FC = () => {
     return country === clickedCountry ? true : false;
   };
 
+  const changeEnterdedAmount = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+    const money: string = e.target.value;
+    const removedCommaMoney = Number(money.replaceAll(",", ""));
+    if(removedCommaMoney > 1000) {
+      return setEnterdedAmount("1,000")
+    }
+    if(money === " " || removedCommaMoney < 0 || isNaN(removedCommaMoney)) {
+      console.log("유효하지 않음");
+    } else {
+      setEnterdedAmount(removedCommaMoney.toLocaleString());
+    }
+  }
+
   return (
     <div>
       <section>
-        <input type="number" />
+        <input type="text" value={enterdedAmount} onChange={changeEnterdedAmount}/>
         <select onChange={changeSelectedCountry}>
           {countrysInfo.map((country) => {
             return <option key={country.id}>{country.engCountry}</option>;
