@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { ChangeEvent, FC, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { changeMoneyForm } from '../../utils/changeMoneyForm';
 
@@ -140,6 +141,9 @@ const SecondCal: FC = () => {
           <p>2022</p>
         </div>
       </ExchangeRateInfoBox>
+      <Link to="/">
+        <button>first</button>
+      </Link>
     </div>
   );
 };

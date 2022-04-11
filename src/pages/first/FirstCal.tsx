@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { changeMoneyForm } from '../../utils/changeMoneyForm';
 
 type exchangeRateInfo = {
@@ -105,6 +106,9 @@ const FirstCal: FC = () => {
           {selectedCountry}입니다.
         </p>
       )}
+      <Link to="second">
+        <button>second</button>
+      </Link>
     </div>
   );
 };
