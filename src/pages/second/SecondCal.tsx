@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { changeMoneyForm } from '../../utils/changeMoneyForm';
+import { removeComma } from '../../utils/removeComma';
 
 interface countrysInfoType {
   id: number;
@@ -39,7 +40,7 @@ const countrysInfo: countrysInfoType[] = [
 const SecondCal: FC = () => {
   const [selectedStandardCountry, setSelectedStandardCountry] = useState<string>(countrysInfo[0].engCountry);
   const [clickedCountry, setClickedCountry] = useState<string>(countrysInfo[1].engCountry);
-  const [enterdedAmount, setEnterdedAmount] = useState<string>();
+  const [enterdedAmount, setEnterdedAmount] = useState<string>('');
   const [exchangeRateQuotes, setExchangeRateQuotes] = useState<{ [key: string]: number }>();
   const [calculatedAmount, setCalculatedAmount] = useState<number>(0);
 
@@ -74,7 +75,7 @@ const SecondCal: FC = () => {
 
   const changeEnterdedAmount = (e: ChangeEvent<HTMLInputElement>) => {
     const money: string = e.target.value;
-    const removedCommaMoney = Number(money.replaceAll(',', ''));
+    const removedCommaMoney = removeComma(money);
     if (removedCommaMoney > 1000) {
       return setEnterdedAmount('1,000');
     }
@@ -87,7 +88,7 @@ const SecondCal: FC = () => {
 
   useEffect(() => {
     const sendMoneyCalculate = () => {
-      const removedCommaMoney = Number(Number(enterdedAmount?.replaceAll(',', '')).toFixed(2));
+      const removedCommaMoney = Number(removeComma(enterdedAmount).toFixed(2));
       if (exchangeRateQuotes) {
         if (selectedStandardCountry === 'USD') {
           const exchangeRate = Number(exchangeRateQuotes[`${selectedStandardCountry}${clickedCountry}`].toFixed(2));

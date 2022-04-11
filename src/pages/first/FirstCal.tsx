@@ -1,21 +1,35 @@
 import { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { changeMoneyForm } from '../../utils/changeMoneyForm';
 import styled from 'styled-components';
+import { changeMoneyForm } from '../../utils/changeMoneyForm';
+import { removeComma } from '../../utils/removeComma';
 
-type exchangeRateInfo = {
-  [index: string]: number;
-  USDKRW: number;
-  USDJPY: number;
-  USDPHP: number;
-};
+interface countrysInfoType {
+  engName: string;
+  krName: string;
+}
+
+const countrysInfo: countrysInfoType[] = [
+  {
+    engName: 'KRW',
+    krName: '한국',
+  },
+  {
+    engName: 'JPY',
+    krName: '일본',
+  },
+  {
+    engName: 'PHP',
+    krName: '필리핀',
+  },
+];
 
 const FirstCal: FC = () => {
-  const [exchangeRateInfo, setExchangeRateInfo] = useState<exchangeRateInfo>();
+  const [exchangeRateInfo, setExchangeRateInfo] = useState<{ [key: string]: number }>();
   const [selectedCountry, setSelectedCountry] = useState<string>('KRW');
   const [curCountryExchangeRate, setCurCountryExchangeRate] = useState<number>();
-  const [enterdedMoney, setEnterdedMoney] = useState<string>();
+  const [enterdedMoney, setEnterdedMoney] = useState<string>('');
   const [amountReceivable, setAmountReceivable] = useState<number | null>(null);
 
   useEffect(() => {
@@ -32,45 +46,47 @@ const FirstCal: FC = () => {
   const changeSelectCountry = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectCountry = e.target.value;
     setSelectedCountry(selectCountry);
+    getExchangeRate(selectCountry);
+    resetEnterdedMoney();
+    resetAmountReceivable();
+  };
+
+  const getExchangeRate = (selectCountry: string) => {
     if (exchangeRateInfo) {
       const exchange = Number(exchangeRateInfo[`USD${selectCountry}`].toFixed(2));
       setCurCountryExchangeRate(exchange);
     }
-
-    resetEnterdedMoney();
-    setAmountReceivable(null);
   };
 
-  const sendMoney = (e: FormEvent<HTMLFormElement>) => {
+  const submitSendMoney = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (curCountryExchangeRate && enterdedMoney && enterdedMoney !== '0') {
       resetEnterdedMoney();
-      setAmountReceivable(amountReceivableCalcul(curCountryExchangeRate, removeCommaMoney(enterdedMoney)));
+      setAmountReceivable(amountReceivableCalculate(curCountryExchangeRate, removeComma(enterdedMoney)));
     }
   };
 
-  const amountReceivableCalcul = (exchangeRate: number, enterdedMoney: number): number => {
+  const amountReceivableCalculate = (exchangeRate: number, enterdedMoney: number): number => {
     return Number((exchangeRate * enterdedMoney).toFixed(2));
   };
 
-  const saveRemmit = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeEnteredMoney = (e: ChangeEvent<HTMLInputElement>) => {
     const money: string = e.target.value;
-    const removedMoney: number = removeCommaMoney(money);
+    const removedMoney: number = removeComma(money);
     const maximumNum = 10000;
     if (money === ' ' || removedMoney < 0 || isNaN(removedMoney)) {
-      console.log('유효하지 않음');
       resetEnterdedMoney();
     } else if (removedMoney > maximumNum) {
       setEnterdedMoney(maximumNum.toLocaleString());
-      setAmountReceivable(null);
+      resetAmountReceivable();
     } else {
       setEnterdedMoney(removedMoney.toLocaleString());
-      setAmountReceivable(null);
+      resetAmountReceivable();
     }
   };
 
-  const removeCommaMoney = (money: string): number => {
-    return Number(money.replaceAll(',', ''));
+  const resetAmountReceivable = () => {
+    setAmountReceivable(null);
   };
 
   const resetEnterdedMoney = () => {
@@ -79,14 +95,14 @@ const FirstCal: FC = () => {
 
   return (
     <FirstCalLayOut>
-      <form onSubmit={sendMoney}>
+      <form onSubmit={submitSendMoney}>
         <p>송금국가: 미국(USD)</p>
         <div>
           <p>수취국가:</p>
           <select onChange={changeSelectCountry}>
-            <option value="KRW">한국(KRW)</option>
-            <option value="JPY">일본(JPY)</option>
-            <option value="PHP">필리핀(PHP)</option>
+            {countrysInfo.map((name) => {
+              return <option value={name.engName}>{`${name.krName}(${name.engName})`}</option>;
+            })}
           </select>
         </div>
         <p>
@@ -94,7 +110,7 @@ const FirstCal: FC = () => {
         </p>
         <div>
           <p>송금액:</p>
-          <input type="text" value={enterdedMoney} onChange={saveRemmit} />
+          <input type="text" value={enterdedMoney} onChange={handleChangeEnteredMoney} />
           <p>USD</p>
         </div>
         <button>Submit</button>
