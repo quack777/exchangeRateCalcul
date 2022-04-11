@@ -101,22 +101,22 @@ const FirstCal: FC = () => {
     <FirstCalLayOut>
       <form onSubmit={submitSendMoney}>
         <p>송금국가: 미국(USD)</p>
-        <div>
+        <SelectBoxLayout>
           <p>수취국가:</p>
           <select onChange={changeSelectCountry}>
             {countrysInfo.map((name) => {
               return <option key={name.id} value={name.engName}>{`${name.krName}(${name.engName})`}</option>;
             })}
           </select>
-        </div>
+        </SelectBoxLayout>
         <p>
           환율: {curCountryExchangeRate && changeMoneyForm(curCountryExchangeRate)} {selectedCountry}/USD
         </p>
-        <div>
+        <EnterdedMoneyLayout>
           <p>송금액:</p>
           <input type="text" value={enterdedMoney} onChange={handleChangeEnteredMoney} />
           <p>USD</p>
-        </div>
+        </EnterdedMoneyLayout>
         <button>Submit</button>
       </form>
       {amountReceivable && (
@@ -135,6 +135,20 @@ const FirstCal: FC = () => {
 const FirstCalLayOut = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  margin-top: 100px;
+  max-width: 1024px;
+  width: 95%;
+`;
+
+const SelectBoxLayout = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const EnterdedMoneyLayout = styled.div`
+  display: flex;
   align-items: center;
 `;
 
