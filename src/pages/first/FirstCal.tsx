@@ -6,20 +6,24 @@ import { changeMoneyForm } from '../../utils/changeMoneyForm';
 import { removeComma } from '../../utils/removeComma';
 
 interface countrysInfoType {
+  id: number;
   engName: string;
   krName: string;
 }
 
 const countrysInfo: countrysInfoType[] = [
   {
+    id: 0,
     engName: 'KRW',
     krName: '한국',
   },
   {
+    id: 1,
     engName: 'JPY',
     krName: '일본',
   },
   {
+    id: 2,
     engName: 'PHP',
     krName: '필리핀',
   },
@@ -101,7 +105,7 @@ const FirstCal: FC = () => {
           <p>수취국가:</p>
           <select onChange={changeSelectCountry}>
             {countrysInfo.map((name) => {
-              return <option value={name.engName}>{`${name.krName}(${name.engName})`}</option>;
+              return <option key={name.id} value={name.engName}>{`${name.krName}(${name.engName})`}</option>;
             })}
           </select>
         </div>
