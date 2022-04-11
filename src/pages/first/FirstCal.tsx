@@ -1,5 +1,5 @@
+import { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react';
 import axios from 'axios';
-import React, { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { changeMoneyForm } from '../../utils/changeMoneyForm';
 
@@ -18,14 +18,12 @@ const FirstCal: FC = () => {
   const [amountReceivable, setAmountReceivable] = useState<number | null>(null);
 
   useEffect(() => {
-    const getExchangeRateInfoApi = () => {
-      axios
-        .get('/data/exchangeRate.json')
-        .then((res) => {
-          setExchangeRateInfo(res.data.quotes);
-          setCurCountryExchangeRate(res.data.quotes.USDKRW);
-        })
-        .catch((err) => console.log(err));
+    const getExchangeRateInfoApi = async () => {
+      const data = await (await axios.get('/data/exchangeRate.json')).data;
+      if (data.success) {
+        setExchangeRateInfo(data.quotes);
+        setCurCountryExchangeRate(data.quotes.USDKRW);
+      }
     };
     getExchangeRateInfoApi();
   }, []);

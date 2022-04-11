@@ -1,5 +1,5 @@
-import axios from 'axios';
 import React, { ChangeEvent, FC, useEffect, useState } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { changeMoneyForm } from '../../utils/changeMoneyForm';
@@ -44,14 +44,11 @@ const SecondCal: FC = () => {
   const [calculatedAmount, setCalculatedAmount] = useState<number>(0);
 
   useEffect(() => {
-    const getExchangeRateInfoApi = () => {
-      axios
-        .get('/data/data.json')
-        .then((res) => {
-          console.log(res.data);
-          setExchangeRateQuotes(res.data.quotes);
-        })
-        .catch((err) => console.log(err));
+    const getExchangeRateInfoApi = async () => {
+      const data = await (await axios.get('/data/data.json')).data;
+      if (data.success) {
+        setExchangeRateQuotes(data.quotes);
+      }
     };
     getExchangeRateInfoApi();
   }, []);
