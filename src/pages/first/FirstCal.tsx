@@ -2,6 +2,7 @@ import { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { changeMoneyForm } from '../../utils/changeMoneyForm';
+import styled from 'styled-components';
 
 type exchangeRateInfo = {
   [index: string]: number;
@@ -77,7 +78,7 @@ const FirstCal: FC = () => {
   };
 
   return (
-    <div>
+    <FirstCalLayOut>
       <form onSubmit={sendMoney}>
         <p>송금국가: 미국(USD)</p>
         <div>
@@ -107,8 +108,14 @@ const FirstCal: FC = () => {
       <Link to="second">
         <button>second</button>
       </Link>
-    </div>
+    </FirstCalLayOut>
   );
 };
+
+const FirstCalLayOut = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
 export default FirstCal;

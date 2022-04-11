@@ -106,7 +106,7 @@ const SecondCal: FC = () => {
   }, [enterdedAmount]);
 
   return (
-    <div>
+    <SecondCalLayout>
       <section>
         <input type="text" value={enterdedAmount} onChange={changeEnterdedAmount} />
         <select onChange={changeSelectedCountry}>
@@ -140,9 +140,15 @@ const SecondCal: FC = () => {
       <Link to="/">
         <button>first</button>
       </Link>
-    </div>
+    </SecondCalLayout>
   );
 };
+
+const SecondCalLayout = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
 const ExchangeRateInfoBox = styled.section`
   width: 150px;
