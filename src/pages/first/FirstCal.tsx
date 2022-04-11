@@ -56,7 +56,7 @@ const FirstCal: FC = () => {
     const money: string = e.target.value;
     const removedMoney: number = removeCommaMoney(money);
     const maximumNum = 10000;
-    if (money === ' ' || removedMoney < 0) {
+    if (money === ' ' || removedMoney < 0 || isNaN(removedMoney)) {
       console.log('유효하지 않음');
       resetEnterdedMoney();
     } else if (removedMoney > maximumNum) {

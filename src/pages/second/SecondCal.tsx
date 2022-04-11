@@ -78,31 +78,30 @@ const SecondCal: FC = () => {
     if (removedCommaMoney > 1000) {
       return setEnterdedAmount('1,000');
     }
-    if (money === ' ' || removedCommaMoney < 0) {
+    if (money === ' ' || removedCommaMoney < 0 || isNaN(removedCommaMoney)) {
       // console.log("유효하지 않음");
     } else {
       setEnterdedAmount(removedCommaMoney.toLocaleString());
     }
   };
 
-  const sendMoneyCalculate = () => {
-    const removedCommaMoney = Number(Number(enterdedAmount?.replaceAll(',', '')).toFixed(2));
-    if (exchangeRateQuotes) {
-      if (selectedStandardCountry === 'USD') {
-        const exchangeRate = Number(exchangeRateQuotes[`${selectedStandardCountry}${clickedCountry}`].toFixed(2));
-        setCalculatedAmount(exchangeRate * removedCommaMoney);
-      } else if (clickedCountry === 'USD') {
-        const exchangeRate = Number(exchangeRateQuotes[`${clickedCountry}${selectedStandardCountry}`].toFixed(2));
-        setCalculatedAmount((1 / exchangeRate) * removedCommaMoney);
-      } else {
-        const standardCountryExchangeRate = Number(exchangeRateQuotes[`USD${selectedStandardCountry}`].toFixed(2));
-        const clickedCountryExchangeRate = Number(exchangeRateQuotes[`USD${clickedCountry}`].toFixed(2));
-        setCalculatedAmount((clickedCountryExchangeRate / standardCountryExchangeRate) * removedCommaMoney);
-      }
-    }
-  };
-
   useEffect(() => {
+    const sendMoneyCalculate = () => {
+      const removedCommaMoney = Number(Number(enterdedAmount?.replaceAll(',', '')).toFixed(2));
+      if (exchangeRateQuotes) {
+        if (selectedStandardCountry === 'USD') {
+          const exchangeRate = Number(exchangeRateQuotes[`${selectedStandardCountry}${clickedCountry}`].toFixed(2));
+          setCalculatedAmount(exchangeRate * removedCommaMoney);
+        } else if (clickedCountry === 'USD') {
+          const exchangeRate = Number(exchangeRateQuotes[`${clickedCountry}${selectedStandardCountry}`].toFixed(2));
+          setCalculatedAmount((1 / exchangeRate) * removedCommaMoney);
+        } else {
+          const standardCountryExchangeRate = Number(exchangeRateQuotes[`USD${selectedStandardCountry}`].toFixed(2));
+          const clickedCountryExchangeRate = Number(exchangeRateQuotes[`USD${clickedCountry}`].toFixed(2));
+          setCalculatedAmount((clickedCountryExchangeRate / standardCountryExchangeRate) * removedCommaMoney);
+        }
+      }
+    };
     sendMoneyCalculate();
   }, [enterdedAmount]);
 
