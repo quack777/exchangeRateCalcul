@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react';
+import { changeMoneyForm } from '../../utils/changeMoneyForm';
 
 type exchangeRateInfo = {
   [index: string]: number;
@@ -74,10 +75,6 @@ const FirstCal: FC = () => {
 
   const resetEnterdedMoney = () => {
     setEnterdedMoney('0');
-  };
-
-  const changeMoneyForm = (money: number): string => {
-    return money.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   return (

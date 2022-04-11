@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { ChangeEvent, FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { changeMoneyForm } from '../../utils/changeMoneyForm';
 
 interface countrysInfoType {
   id: number;
@@ -39,7 +40,7 @@ const SecondCal: FC = () => {
   const [clickedCountry, setClickedCountry] = useState<string>(countrysInfo[1].engCountry);
   const [enterdedAmount, setEnterdedAmount] = useState<string>();
   const [exchangeRateQuotes, setExchangeRateQuotes] = useState<{ [key: string]: number }>();
-  const [calculatedAmount, setCalculatedAmount] = useState<number | string>(0);
+  const [calculatedAmount, setCalculatedAmount] = useState<number>(0);
 
   useEffect(() => {
     const getExchangeRateInfoApi = () => {
@@ -65,7 +66,7 @@ const SecondCal: FC = () => {
   const changeClickedCountry = (e: React.MouseEvent<HTMLDivElement>) => {
     const elementTarget = e.target as Element;
     setClickedCountry(elementTarget.innerHTML);
-    // setEnterdedAmount("0");
+    setEnterdedAmount('0');
   };
 
   const acitveClickedCountry = (country: string): boolean => {
@@ -89,19 +90,11 @@ const SecondCal: FC = () => {
     if (exchangeRateQuotes) {
       if (selectedStandardCountry === 'USD') {
         const exchangeRate = Number(exchangeRateQuotes[`${selectedStandardCountry}${clickedCountry}`].toFixed(2));
-        const removedCommaMoney = Number(enterdedAmount?.replaceAll(',', ''));
-        setCalculatedAmount((exchangeRate * removedCommaMoney).toFixed(2));
+        const removedCommaMoney = Number(enterdedAmount?.replaceAll(',', '')).toFixed(2);
+        setCalculatedAmount(exchangeRate * Number(removedCommaMoney));
       }
     }
   };
-
-  useEffect(() => {
-    const a = () => {
-      const a = 2;
-      console.log(a.toFixed(2));
-    };
-    a();
-  }, []);
 
   useEffect(() => {
     sendMoneyCalculate();
@@ -133,9 +126,8 @@ const SecondCal: FC = () => {
         </CountrysBox>
         <div>
           <p>
-            {clickedCountry} {calculatedAmount.toLocaleString()}
+            {clickedCountry} {changeMoneyForm(calculatedAmount)}
           </p>
-          <p>2,000.00</p>
           <p>기준일:</p>
           <p>2022</p>
         </div>
