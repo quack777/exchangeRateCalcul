@@ -60,13 +60,13 @@ const SecondCal: FC = () => {
     setClickedCountry(
       selectedCountry === countrysInfo[0].engCountry ? countrysInfo[1].engCountry : countrysInfo[0].engCountry,
     );
-    enterdedAmount && setEnterdedAmount('0');
+    enterdedAmount && setEnterdedAmount('');
   };
 
   const changeClickedCountry = (e: React.MouseEvent<HTMLDivElement>) => {
     const elementTarget = e.target as Element;
     setClickedCountry(elementTarget.innerHTML);
-    enterdedAmount && setEnterdedAmount('0');
+    enterdedAmount && setEnterdedAmount('');
   };
 
   const acitveClickedCountry = (country: string): boolean => {

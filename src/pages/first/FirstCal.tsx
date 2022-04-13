@@ -94,7 +94,7 @@ const FirstCal: FC = () => {
   };
 
   const resetEnterdedMoney = () => {
-    setEnterdedMoney('0');
+    setEnterdedMoney('');
   };
 
   return (
