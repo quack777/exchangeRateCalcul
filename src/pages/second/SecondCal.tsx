@@ -2,8 +2,8 @@ import React, { ChangeEvent, FC, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { changeMoneyForm } from '../../utils/changeMoneyForm';
-import { removeComma } from '../../utils/removeComma';
+import { changeMoneyForm } from '@/utils/changeMoneyForm';
+import { removeComma } from '@/utils/removeComma';
 
 interface countrysInfoType {
   id: number;
